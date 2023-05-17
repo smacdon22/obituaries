@@ -1,5 +1,3 @@
-#https://stackoverflow.com/questions/32763950/python-continuously-check-size-of-files-being-added-to-list-stop-at-size-zip
-
 import os,os.path, zipfile
 from time import *
 import timeit
@@ -63,6 +61,7 @@ zipList = []
 
 # Create a counter to check number of files
 count = 0
+zcount = 0
 
 # Set the root, directory, and file name
 for root,direc,f in os.walk(searchDirectory):
@@ -84,6 +83,7 @@ for root,direc,f in os.walk(searchDirectory):
 
             if name[:2] != '._' and name[-4:] != '.zip':
                 zipList.append(full)
+                zcount += 1
             else:
                  print(name)
 
@@ -93,10 +93,15 @@ for root,direc,f in os.walk(searchDirectory):
                 # 1 kilobyte = 1,024 bytes
                 # 1 megabyte = 1,048,576 bytes
                 # 1 gigabyte = 1,073,741,824 bytes
-            if (((totalSize + fileSize) // 1048576 > 900) and (count %2 == 0)) or (count == num_files):
+            zipSize = 1048576
+            # can be like, whatever, i did num_files / 20 so i would have 20 zip files lol
+            zipFileAmt = 2480
+            if (totalSize >= zipSize) or (zcount == zipFileAmt) or (count == num_files):
+                # compress files and reset counts
                 zipFunction(zipList,part_count)
                 zipList = []
                 totalSize = 0
+                zcount = 0
                 part_count += 1
 
 eTime = datetime.datetime.now()
